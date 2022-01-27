@@ -20,8 +20,33 @@ def parseArgs():
 def highestScore(subMat,gap):
     rows = len(subMat)
     cols = len(subMat[0])
-    
-
+    weight = subMat[1,1]
+    print(rows)
+    dynamicTable = np.zeros((rows,cols), dtype=int)
+    for r in range(rows):
+        for c in range(cols):
+            curr = subMat[r,c]
+            if r+c != 2:
+                if c>1: 
+                    fromLeft = dynamicTable(r,c-1) + gap
+                if r>1: 
+                    fromTop = dynamicTable(r-1,c) + gap
+                if (r>1) and (c>1): 
+                    topLeft = dynamicTable(r-1,c-1)
+                    fromDiag = curr + topLeft
+                if fromLeft and fromTop and fromDiag:
+                    weight = max([fromLeft, fromTop, fromDiag])
+                    del fromTop
+                    del fromLeft
+                    del fromDiag
+                elif fromTop and fromDiag:
+                    weight = fromLeft
+                    del fromLeft
+                elif fromLeft and fromDiag:
+                    weight = fromTop
+                    del fromTop
+            dynamicTable[r,c] = weight
+    score = dynamicTable[rows, cols]
     
 
 def seqAlign(seq1, seq2, match, mismatch, gap):
@@ -53,9 +78,6 @@ def seqAlign(seq1, seq2, match, mismatch, gap):
 
 def main():
     parseArgs()
-    # highestScore( )
-    # seqAlign()
-    # seqAlignBiopython()
 
 if __name__ == "__main__":
     main()
