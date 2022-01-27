@@ -34,6 +34,7 @@ def highestScore(subMat,gap):
                 if (r>1) and (c>1): 
                     topLeft = dynamicTable[r-1,c-1]
                     fromDiag = curr + topLeft
+                # FIX ME: -----------------                
                 if fromLeft and fromTop and fromDiag:
                     weight = max([fromLeft, fromTop, fromDiag])
                     del fromTop
@@ -45,6 +46,7 @@ def highestScore(subMat,gap):
                 elif fromLeft and fromDiag:
                     weight = fromTop
                     del fromTop
+                # ----------------- 
             dynamicTable[r,c] = weight
     score = dynamicTable[rows, cols]
     
