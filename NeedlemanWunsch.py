@@ -17,8 +17,12 @@ def parseArgs():
     score = seqAlign(seq1, seq2, match, mismatch, gap)
     return score
 
-def highestScore():
-    print("Hello World 1!")
+def highestScore(subMat,gap):
+    rows = len(subMat)
+    cols = len(subMat[0])
+    
+
+    
 
 def seqAlign(seq1, seq2, match, mismatch, gap):
     if not match:
@@ -27,22 +31,21 @@ def seqAlign(seq1, seq2, match, mismatch, gap):
         mismatch = -4
     if not gap:
         gap = -5
+
     match = int(match)
     mismatch = int(mismatch)
     gap = int(gap)
+
     lenSeq1 = len(seq1)
     lenSeq2 = len(seq2)
-
-    subMat = np.zeros((lenSeq1,lenSeq2), dtype=int)
-    print(seq1[1])
-    print(seq2)
-
+    subMat = np.zeros((lenSeq1+1,lenSeq2+1), dtype=int)
     for i in range(lenSeq1):
-        subMat[i,:] = seq1[i] == seq2
-        print(subMat[i,:])
-        print(subMat)
-
-    # highestScore(subMat, gap)
+        for j in range(lenSeq2):
+            if seq1[i] == seq2[j]: 
+                subMat[i+1,j+1] = 1
+            else:
+                subMat[i+1,j+1] = 0
+    highestScore(subMat, gap)
     
 
 # def seqAlignBiopython():
