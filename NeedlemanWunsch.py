@@ -23,16 +23,16 @@ def highestScore(subMat,gap):
     weight = subMat[1,1]
     print(rows)
     dynamicTable = np.zeros((rows,cols), dtype=int)
-    for r in range(rows):
-        for c in range(cols):
+    for r in range(1,rows):
+        for c in range(1,cols):
             curr = subMat[r,c]
             if r+c != 2:
                 if c>1: 
-                    fromLeft = dynamicTable(r,c-1) + gap
+                    fromLeft = dynamicTable[r,c-1] + gap
                 if r>1: 
-                    fromTop = dynamicTable(r-1,c) + gap
+                    fromTop = dynamicTable[r-1,c] + gap
                 if (r>1) and (c>1): 
-                    topLeft = dynamicTable(r-1,c-1)
+                    topLeft = dynamicTable[r-1,c-1]
                     fromDiag = curr + topLeft
                 if fromLeft and fromTop and fromDiag:
                     weight = max([fromLeft, fromTop, fromDiag])
