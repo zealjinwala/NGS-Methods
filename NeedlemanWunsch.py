@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from Bio import SeqIO
 
+# dynamic proogramming function
 def highestScore(subMat,gap):
     rows = len(subMat)
     cols = len(subMat[0])
