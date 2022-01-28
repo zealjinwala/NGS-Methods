@@ -1,14 +1,13 @@
 # By Zeal Jinwala
 # Date: January 27, 2022
 
-# This program is algorithm used in bioinformatics to align protein or nucleotide sequences. 
+# This program is algorithm used in bioinformatics to GLOBALY align protein or nucleotide sequences. 
 # It is an application of dynamic programming to compare biological sequences.
 
 import pandas as pd
 import numpy as np
 from Bio import SeqIO
 
-# Ask for seq 1, seq 2, match, mismatch, and gap
 def parseArgs():
     seq1 = input("Enter the first sequence: ")
     seq2 = input("Enter the second sequence: ")
@@ -18,12 +17,10 @@ def parseArgs():
     score = seqAlign(seq1, seq2, match, mismatch, gap)
     print(score)
 
-
 def highestScore(subMat,gap):
     rows = len(subMat)-1
     cols = len(subMat[0])-1
     dynamicTable = np.zeros((rows,cols),dtype=int)
-
     for r in range(rows):
         for c in range(cols):
             curr = subMat[r,c]
@@ -34,7 +31,6 @@ def highestScore(subMat,gap):
             dynamicTable[r,c] = maxScore
             print(dynamicTable)
     score = dynamicTable[rows-1, cols-1]
-    print(score)
     
 def seqAlign(seq1, seq2, match, mismatch, gap):
     if not match:
