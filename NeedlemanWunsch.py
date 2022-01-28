@@ -4,7 +4,6 @@
 # This program is algorithm used in bioinformatics to align protein or nucleotide sequences. 
 # It is an application of dynamic programming to compare biological sequences.
 
-from re import sub
 import pandas as pd
 import numpy as np
 from Bio import SeqIO
@@ -17,20 +16,20 @@ def parseArgs():
     mismatch = input("Enter the mismatch score: ")
     gap = input("Enter the gap penalty: ")
     score = seqAlign(seq1, seq2, match, mismatch, gap)
+    print(score)
 
 
 def highestScore(subMat,gap):
-    rows = len(subMat)
-    cols = len(subMat[0])
+    rows = len(subMat)-1
+    cols = len(subMat[0])-1
     dynamicTable = np.zeros((rows,cols),dtype=int)
-    dynamicTable[0,1:cols] = dynamicTable[0,1:cols]  + gap
-    dynamicTable[1:rows,0] = dynamicTable[1:rows,0] + gap
-    for r in range(1,rows):
-        for c in range(1,cols):
+
+    for r in range(rows):
+        for c in range(cols):
             curr = subMat[r,c]
             diag = curr + dynamicTable[r-1,c-1]
-            top = dynamicTable[r-1,c]+gap
-            left = dynamicTable[r,c-1]+gap
+            top = dynamicTable[r-1,c] + gap
+            left = dynamicTable[r,c-1] + gap
             maxScore = max(diag,top,left)
             dynamicTable[r,c] = maxScore
             print(dynamicTable)
