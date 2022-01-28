@@ -62,7 +62,7 @@ def seqAlignBiopython(seq1, seq2, match, mismatch, gap):
     match = int(match)
     mismatch = int(mismatch)
     gap = int(gap)
-    alignments = pairwise2.align.globalms(seq1, seq2, match, mismatch, gap,gap)
+    alignments = pairwise2.align.globalms(seq1, seq2, match, mismatch, gap, gap)
     return alignments
 
 def main():
