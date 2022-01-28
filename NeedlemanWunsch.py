@@ -5,7 +5,8 @@
 
 import pandas as pd
 import numpy as np
-from Bio import SeqIO
+from Bio import pairwise2
+# from Bio.pairwise2 import format_alignment
 
 # dynamic proogramming function
 def highestScore(subMat,gap):
@@ -51,8 +52,18 @@ def seqAlign(seq1, seq2, match, mismatch, gap):
     score = highestScore(subMat, gap)
     return score
 
-# def seqAlignBiopython():
-#     print("Hello World 3!")
+def seqAlignBiopython(seq1, seq2, match, mismatch, gap):
+    if not match:
+        match = 5
+    if not mismatch:
+        mismatch = -4
+    if not gap:
+        gap = -5
+    match = int(match)
+    mismatch = int(mismatch)
+    gap = int(gap)
+    alignments = pairwise2.align.globalms(seq1, seq2, match, mismatch, gap,gap)
+    return alignments
 
 def main():
     seq1 = input("Enter the first sequence: ")
@@ -61,7 +72,9 @@ def main():
     mismatch = input("Enter the mismatch score: ")
     gap = input("Enter the gap penalty: ")
     score = seqAlign(seq1, seq2, match, mismatch, gap)
+    # biopythonScore = seqAlignBiopython(seq1, seq2, match, mismatch, gap)
     print(score)
+    # print(format_alignment(*biopythonScore[0]))
 
 
 if __name__ == "__main__":
