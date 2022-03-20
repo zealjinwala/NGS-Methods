@@ -3,6 +3,7 @@
 # This program is an algorithm used in bioinformatics to GLOBALY align protein or nucleotide sequences. 
 # It is an application of dynamic programming to compare biological sequences.
 
+# imoprting libraries
 import numpy as np
 from Bio import pairwise2
 import argparse
