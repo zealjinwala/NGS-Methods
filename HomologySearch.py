@@ -6,8 +6,7 @@
 # This program take an XML file (BLAST search results) as input and answers the following questions:
 #   1) Prints the name of the top protein hit.
 #   2) Prints a unique list of species names of all the hits.
-#   3) Finds the top scoring hit with a mouse protein. Prints the local sequence alignment of the query with this mouse protein.
-#   4) Shows a histogram of percent identities of the first HSPs from all the hits.
+#   3) Shows a histogram of percent identities of the first HSPs from all the hits.
 
 # Query Protein: <br>
 # SGFRKMAFPSGKVEGCMVQVTCGTTTLNGLWLDDVVYCPRHVICTSEDMLNPNYEDLLIRKSNHNFLVQAGNVQLRVIG
@@ -17,6 +16,8 @@
 
 # import argparse
 import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
 
 def parseXML(filepath):
     '''takes in the XML(BLAST result), outputs list in csv format'''
@@ -46,44 +47,70 @@ def parseXML(filepath):
 
 def getInfo(blastResults):
     '''takes in list of results, outputs results '''
-    # top hit
-    hitNames = str(blastResults.iloc[0,1])
+    # get the top hit
+    hitName = str(blastResults['Name'].iloc[0])
     sep = ">"
-    ids = [pos for pos, char in enumerate(hitNames) if char == sep]
-    topHit = hitNames[ids[0]:ids[1]]
-    # unique list of proteins
+    ids = [pos for pos, char in enumerate(hitName) if char == sep]
+    topHit = hitName[ids[0]+1:ids[1]]
+    # unique list of all proteins found
     descriptions = blastResults.Name
     uniqueList = getUniqueList(descriptions)
-    # percentIdents = getPercentIdents()
-    return topHit, uniqueList
+    # get percent idents
+    queurySeqs = blastResults['Query Seq'] 
+    subSeq = blastResults['Subject Sequence'] 
+    percentIdents = getPercentIdents(queurySeqs,subSeq)
+    return topHit, uniqueList, percentIdents
 
-def getUniqueList():
+def getUniqueList(descriptions):
+    '''takes in list of all hit proteins, outputs a unique, cleaned list '''
+    speciesList = []
+    for i in range(len(descriptions)): 
+        description = descriptions[i]
+        # find all pdb matches for this protein
+        sep = ">"
+        ids = [pos for pos, char in enumerate(description) if char == sep]
+        print(ids)
+        if len(ids)>0: # if more than one pdb matches are found
+            if len(ids) == 1: # if only 1 pdb match is found
+                substring = description[ids[0]+1:len(description)]
+                brackStart = description.find("[")
+                brackEnd = description.find("]")
+                species = description[brackStart:brackEnd]
+                speciesList.append(substring)
+            else: # if more than one pdb matches are found
+                # get all [ NOT followed by a (
+                subString = description[ids[0]+1:len(description)] 
+                brackStart = [pos for pos, char in enumerate(description) if char == "["]
+                print(brackStart)
+                brackEnd = [pos for pos, char in enumerate(description) if char == "]"]
+                ### FIX ME ###
+        else: # if the protein hit has no pdb matches
+            brackStart = description.find("[")
+            brackEnd = description.find("]")
+            species = description[brackStart:brackEnd]
+            speciesList.append(substring)
+    speciesArray = np.array(speciesList)
+    uniqueList = np.unique(speciesArray)
+    uniqueList = list(uniqueList)
+    return uniqueList
 
-# def getPercentIdents():
+def getPercentIdents(queurySeqs,subSeq):
+    percentIdentities = []
+    for i in range(queurySeqs.size): 
+        matches = sum (a==b for a, b in zip(queurySeqs[i], subSeq[i]))
+        percentIdentity = matches/len(queurySeqs[i]) *100
+        percentIdentities.append(percentIdentity)
+    return percentIdentities
 
-
-
-    # top scoring hit with a mouse protein
-    # histogram of percent identities of the first HSPs from all the hits
-    return topHit, uniqueList, PercIdentHist
-
+# histogram of percent identities of the first HSPs from all the hits
 if __name__ == "__main__":
     filepath = "/Users/zsj24/GitHub/NGS-Methods/query_blastpdb.xml"
     blastResults = parseXML(filepath)
-    print(blastResults.head(5))
-    print((blastResults.Alignment[0]))
     [topHit, uniqueList, PercIdentHist] = getInfo(blastResults)
+    print(uniqueList)
+    plt.hist(PercIdentHist)
+    plt.title("Percent identities of the first HSPs from all the hits")
+    plt.xlabel("Percent Identity")
+    plt.ylabel("Frequency")
+    plt.show()
 
-    # parser = argparse.ArgumentParser()
-
-    # parser.add_argument(
-    # "--xmlFileName",
-    # type=str,
-    # required=True,
-    # help="Name of the xml file (BLAST result)",
-    # )
-
-    # args = parser.parse_args()
-    # blastresults =  parseXML(
-    #     args.xmlFileName
-    #     )
